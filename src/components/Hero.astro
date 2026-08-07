@@ -1,0 +1,89 @@
+---
+import Icon from './Icon.astro';
+import DashboardMockup from './DashboardMockup.astro';
+import { useTranslations, type Lang } from '../i18n';
+
+interface Props {
+  lang: Lang;
+}
+
+const { lang } = Astro.props;
+const t = useTranslations(lang);
+---
+
+<section class="relative overflow-hidden bg-surface pt-16 pb-20 md:pt-24 md:pb-section">
+  <div
+    class="orb top-[-12rem] left-[-8rem] size-[32rem] bg-accent/15 dark:bg-primary/25"
+    aria-hidden="true"
+  >
+  </div>
+  <div
+    class="orb top-[10rem] right-[-10rem] size-[28rem] bg-primary/10 dark:bg-accent/15"
+    aria-hidden="true"
+  >
+  </div>
+
+  <div class="relative z-10 mx-auto max-w-page px-5 md:px-10 xl:px-20">
+    <div class="grid items-center gap-12 lg:grid-cols-12 lg:gap-gutter">
+      <div class="lg:col-span-6 xl:col-span-6">
+        <p
+          class="inline-flex items-center gap-2 rounded-full border border-outline-variant/60 bg-surface-lowest/60 px-3 py-1.5 text-label-caps text-on-surface-variant uppercase backdrop-blur-sm"
+        >
+          <Icon name="sparkle" size={14} class="text-primary" />
+          {t.hero.eyebrow}
+        </p>
+
+        <h1
+          class="mt-6 text-[2.5rem] leading-[1.1] font-extrabold tracking-[-0.02em] text-brand text-balance md:text-[3.5rem] xl:text-display"
+        >
+          {t.hero.titleLead}{' '}
+          <span class="text-primary">{t.hero.titleAccent}</span>{' '}
+          {t.hero.titleTrail}
+        </h1>
+
+        <p class="mt-6 max-w-xl text-body-lg text-on-surface-variant text-pretty">
+          {t.hero.subtitle}
+        </p>
+
+        <div class="mt-9 flex flex-col gap-3 sm:flex-row sm:items-center">
+          <a
+            href="#cta"
+            class="inline-flex items-center justify-center gap-2 rounded-xl bg-primary px-7 py-4 text-label-caps text-on-primary uppercase shadow-[var(--shadow-float)] transition-transform hover:-translate-y-0.5"
+          >
+            {t.hero.ctaPrimary}
+            <Icon name="arrow-right" size={16} />
+          </a>
+          <a
+            href="#platform"
+            class="glass inline-flex items-center justify-center gap-2 rounded-xl px-7 py-4 text-label-caps text-on-surface uppercase transition-colors hover:text-primary"
+          >
+            <Icon name="play" size={16} />
+            {t.hero.ctaSecondary}
+          </a>
+        </div>
+
+        <p class="mt-6 text-body-md text-on-surface-muted">{t.hero.note}</p>
+      </div>
+
+      <div class="relative lg:col-span-6 xl:col-span-6">
+        <DashboardMockup lang={lang} />
+
+        {/* Pulled up so it straddles the panel's bottom edge — the panel reserves the room. */}
+        <div
+          class="glass relative z-20 -mt-10 ml-4 flex w-fit items-center gap-3 rounded-2xl p-4 shadow-[var(--shadow-ambient)] sm:-ml-4 sm:p-5"
+        >
+          <span
+            class="flex size-11 shrink-0 items-center justify-center rounded-full bg-primary/10 text-primary dark:bg-primary/20"
+          >
+            <Icon name="reports" size={20} />
+          </span>
+          <div>
+            <p class="text-label-caps text-on-surface-muted uppercase">{t.hero.statLabel}</p>
+            <p class="text-headline-md font-bold text-brand">{t.hero.statValue}</p>
+            <p class="text-label-caps text-on-surface-muted">{t.hero.statCaption}</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>

@@ -1,0 +1,44 @@
+---
+import Section from './Section.astro';
+import Icon from './Icon.astro';
+import { useTranslations, type Lang } from '../i18n';
+
+interface Props {
+  lang: Lang;
+}
+
+const { lang } = Astro.props;
+const t = useTranslations(lang);
+---
+
+<Section id="faq" tone="raised">
+  <div class="grid gap-12 lg:grid-cols-12 lg:gap-gutter">
+    <div class="lg:col-span-4">
+      <p class="text-label-caps text-primary uppercase">{t.faq.eyebrow}</p>
+      <h2 class="headline-section mt-3 text-brand text-balance">{t.faq.title}</h2>
+    </div>
+
+    <div class="lg:col-span-8">
+      {/* Native <details>: keyboard-accessible and works with JS disabled. */}
+      <div class="divide-y divide-outline-variant/40 border-y border-outline-variant/40">
+        {
+          t.faq.items.map((item) => (
+            <details class="group">
+              {/* The question is a real heading: it puts every Q in the document
+                  outline, which is how answer engines pick Q&A pairs apart. */}
+              <summary class="flex cursor-pointer list-none items-center justify-between gap-6 py-6 text-body-lg font-semibold text-on-surface transition-colors hover:text-primary [&::-webkit-details-marker]:hidden">
+                <h3 class="text-body-lg font-semibold">{item.q}</h3>
+                <Icon
+                  name="chevron-down"
+                  size={20}
+                  class="shrink-0 text-primary transition-transform duration-300 group-open:rotate-180"
+                />
+              </summary>
+              <p class="pb-6 text-body-md text-on-surface-variant text-pretty">{item.a}</p>
+            </details>
+          ))
+        }
+      </div>
+    </div>
+  </div>
+</Section>

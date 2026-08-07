@@ -1,0 +1,43 @@
+---
+import Icon from './Icon.astro';
+import { useTranslations, type Lang } from '../i18n';
+
+interface Props {
+  lang: Lang;
+}
+
+const { lang } = Astro.props;
+const t = useTranslations(lang);
+---
+
+<section id="cta" class="relative overflow-hidden bg-inverse-surface py-20 md:py-section">
+  <div class="orb top-[-14rem] left-1/2 size-[36rem] -translate-x-1/2 bg-primary/40" aria-hidden="true">
+  </div>
+
+  <div class="relative z-10 mx-auto max-w-3xl px-5 text-center md:px-10">
+    <h2
+      class="text-[2rem] leading-tight font-extrabold tracking-[-0.01em] text-on-inverse-surface text-balance md:text-[2.75rem]"
+    >
+      {t.cta.title}
+    </h2>
+    <p class="mx-auto mt-5 max-w-xl text-body-lg text-on-inverse-surface-variant text-pretty">
+      {t.cta.body}
+    </p>
+
+    <div class="mt-10 flex flex-col justify-center gap-3 sm:flex-row">
+      <a
+        href="#"
+        class="inline-flex items-center justify-center gap-2 rounded-xl bg-on-inverse-surface px-7 py-4 text-label-caps text-inverse-surface uppercase transition-transform hover:-translate-y-0.5"
+      >
+        {t.cta.primary}
+        <Icon name="arrow-right" size={16} />
+      </a>
+      <a
+        href="#"
+        class="inline-flex items-center justify-center rounded-xl border border-on-inverse-surface/30 px-7 py-4 text-label-caps text-on-inverse-surface uppercase transition-colors hover:bg-on-inverse-surface/10"
+      >
+        {t.cta.secondary}
+      </a>
+    </div>
+  </div>
+</section>

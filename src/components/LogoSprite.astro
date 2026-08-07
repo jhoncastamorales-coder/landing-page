@@ -1,0 +1,17 @@
+---
+import { logoPaths } from '../generated/logo-paths';
+
+/**
+ * Defines the brand lockup once per page as an SVG symbol; every <Logo /> is a
+ * lightweight <use> reference to it. The path is traced from the brand artwork
+ * (see scripts/trace-logo.mjs) and needs fill-rule="evenodd" so the leaf
+ * interior and the "O" counter stay open.
+ */
+const { full } = logoPaths;
+---
+
+<svg xmlns="http://www.w3.org/2000/svg" class="hidden" aria-hidden="true">
+  <symbol id="atrio-logo" viewBox={`0 0 ${full.width} ${full.height}`}>
+    <path fill="currentColor" fill-rule="evenodd" d={full.d}></path>
+  </symbol>
+</svg>

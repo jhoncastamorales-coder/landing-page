@@ -1,0 +1,36 @@
+---
+import Layout from '../layouts/Layout.astro';
+import Hero from './Hero.astro';
+import TrustBar from './TrustBar.astro';
+import Definition from './Definition.astro';
+import Features from './Features.astro';
+import Hybrid from './Hybrid.astro';
+import Integrations from './Integrations.astro';
+import Stats from './Stats.astro';
+import Pricing from './Pricing.astro';
+import Testimonial from './Testimonial.astro';
+import Faq from './Faq.astro';
+import CtaBand from './CtaBand.astro';
+import type { Lang } from '../i18n';
+
+/** The landing page itself — one composition, rendered once per locale. */
+interface Props {
+  lang: Lang;
+}
+
+const { lang } = Astro.props;
+---
+
+<Layout lang={lang}>
+  <Hero lang={lang} />
+  <TrustBar lang={lang} />
+  <Definition lang={lang} />
+  <Features lang={lang} />
+  <Hybrid lang={lang} />
+  <Integrations lang={lang} />
+  <Stats lang={lang} />
+  <Pricing lang={lang} />
+  <Testimonial lang={lang} />
+  <Faq lang={lang} />
+  <CtaBand lang={lang} />
+</Layout>

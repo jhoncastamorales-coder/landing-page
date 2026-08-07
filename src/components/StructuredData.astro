@@ -1,0 +1,182 @@
+---
+import { useTranslations, switchLocalePath, type Lang } from '../i18n';
+import { BRAND, SITE_URL, CONTENT_LAST_MODIFIED } from '../consts';
+import { PLANS, CURRENCY, TRIAL_DAYS } from '../data/plans';
+
+/**
+ * schema.org graph for the page. One `@graph` with cross-referenced `@id`s
+ * beats several loose blobs: crawlers and answer engines resolve the whole
+ * entity (organisation → product → offers → FAQ) in a single pass.
+ *
+ * Deliberately absent: `AggregateRating` and `Review`. Publishing ratings that
+ * no real customer left violates Google's structured-data policies and risks a
+ * manual action — add them only when they are backed by genuine reviews.
+ */
+interface Props {
+  lang: Lang;
+}
+
+const { lang } = Astro.props;
+const t = useTranslations(lang);
+
+const locale = lang === 'es' ? 'es-ES' : 'en-US';
+const pageUrl = new URL(Astro.url.pathname, SITE_URL).href;
+const orgId = `${SITE_URL}/#organization`;
+const siteId = `${SITE_URL}/#website`;
+const softwareId = `${SITE_URL}/#software`;
+const pageId = `${pageUrl}#webpage`;
+
+const offers = t.pricing.plans.map((plan, index) => {
+  const { slug, priceEUR } = PLANS[index]!;
+  return {
+    '@type': 'Offer',
+    '@id': `${SITE_URL}/#offer-${slug}`,
+    name: plan.name,
+    description: plan.description,
+    category: 'subscription',
+    url: `${pageUrl}#pricing`,
+    availability: 'https://schema.org/InStock',
+    priceCurrency: CURRENCY,
+    ...(priceEUR === null
+      ? {}
+      : {
+          price: priceEUR,
+          priceSpecification: {
+            '@type': 'UnitPriceSpecification',
+            price: priceEUR,
+            priceCurrency: CURRENCY,
+            unitCode: 'MON', // per month
+            billingIncrement: 1,
+          },
+        }),
+    eligibleCustomerType: 'https://schema.org/Business',
+  };
+});
+
+const featureList = [
+  ...t.hybrid.points,
+  t.features.inventory.title,
+  t.features.operations.title,
+  t.features.reports.title,
+  t.features.connectivity.title,
+  ...t.integrations.items.map((item) => item.title),
+];
+
+const graph = [
+  {
+    '@type': 'Organization',
+    '@id': orgId,
+    name: BRAND.name,
+    legalName: BRAND.legalName,
+    url: `${SITE_URL}/`,
+    foundingDate: BRAND.founded,
+    logo: {
+      '@type': 'ImageObject',
+      '@id': `${SITE_URL}/#logo`,
+      url: new URL(BRAND.logo, SITE_URL).href,
+      contentUrl: new URL(BRAND.logo, SITE_URL).href,
+      caption: BRAND.name,
+    },
+    image: { '@id': `${SITE_URL}/#logo` },
+    email: BRAND.email,
+    telephone: BRAND.telephone,
+    address: {
+      '@type': 'PostalAddress',
+      addressLocality: BRAND.address.locality,
+      addressRegion: BRAND.address.region,
+      addressCountry: BRAND.address.country,
+    },
+    contactPoint: {
+      '@type': 'ContactPoint',
+      contactType: 'sales',
+      email: BRAND.email,
+      telephone: BRAND.telephone,
+      availableLanguage: ['es', 'en'],
+    },
+    sameAs: BRAND.sameAs,
+  },
+  {
+    '@type': 'WebSite',
+    '@id': siteId,
+    url: `${SITE_URL}/`,
+    name: BRAND.name,
+    description: t.meta.description,
+    publisher: { '@id': orgId },
+    inLanguage: ['es-ES', 'en-US'],
+  },
+  {
+    '@type': 'SoftwareApplication',
+    '@id': softwareId,
+    name: 'ATRIO/PMS',
+    alternateName: BRAND.name,
+    applicationCategory: 'BusinessApplication',
+    applicationSubCategory: 'Property Management System',
+    operatingSystem: 'Web browser',
+    url: `${SITE_URL}/`,
+    description: t.seo.definition,
+    inLanguage: locale,
+    publisher: { '@id': orgId },
+    provider: { '@id': orgId },
+    image: new URL(BRAND.ogImage, SITE_URL).href,
+    softwareHelp: `${pageUrl}#faq`,
+    featureList,
+    audience: {
+      '@type': 'BusinessAudience',
+      name: t.trust.items.join(', '),
+    },
+    offers,
+    /** Explicit, machine-readable statement of the free trial. */
+    potentialAction: {
+      '@type': 'RegisterAction',
+      name: t.cta.primary,
+      target: `${pageUrl}#cta`,
+      description: `${TRIAL_DAYS}-day free trial`,
+    },
+  },
+  {
+    '@type': 'WebPage',
+    '@id': pageId,
+    url: pageUrl,
+    name: t.meta.title,
+    description: t.meta.description,
+    isPartOf: { '@id': siteId },
+    about: { '@id': softwareId },
+    primaryImageOfPage: new URL(BRAND.ogImage, SITE_URL).href,
+    inLanguage: locale,
+    datePublished: '2026-08-06',
+    dateModified: CONTENT_LAST_MODIFIED,
+    breadcrumb: { '@id': `${pageUrl}#breadcrumb` },
+  },
+  {
+    '@type': 'BreadcrumbList',
+    '@id': `${pageUrl}#breadcrumb`,
+    itemListElement: [
+      {
+        '@type': 'ListItem',
+        position: 1,
+        name: BRAND.name,
+        item: new URL(switchLocalePath(Astro.url, lang), SITE_URL).href,
+      },
+    ],
+  },
+  {
+    '@type': 'FAQPage',
+    '@id': `${pageUrl}#faq-schema`,
+    inLanguage: locale,
+    isPartOf: { '@id': pageId },
+    mainEntity: t.faq.items.map((item, index) => ({
+      '@type': 'Question',
+      '@id': `${pageUrl}#faq-${index + 1}`,
+      name: item.q,
+      acceptedAnswer: {
+        '@type': 'Answer',
+        text: item.a,
+      },
+    })),
+  },
+];
+
+const jsonLd = JSON.stringify({ '@context': 'https://schema.org', '@graph': graph });
+---
+
+<script type="application/ld+json" is:inline set:html={jsonLd} />

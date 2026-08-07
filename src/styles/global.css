@@ -1,0 +1,242 @@
+@import 'tailwindcss';
+
+@import '@fontsource-variable/hanken-grotesk/index.css';
+
+/*
+ * Design system: "Aura Professional" (see stitch_atrio_pms_administrative_dashboard/aura_professional/DESIGN.md)
+ * High-end corporate: minimalism + glassmorphism, Hanken Grotesk throughout.
+ * Light  = "Crisp Gallery"  — near-white surfaces, deep navy for authority.
+ * Dark   = "Deep Slate"     — charcoal-navy canvas, electric blue accents.
+ */
+
+@custom-variant dark (&:where(.dark, .dark *));
+
+:root {
+  color-scheme: light;
+
+  /* Surfaces */
+  --surface: #faf8ff;
+  --surface-lowest: #ffffff;
+  --surface-low: #f2f3ff;
+  --surface-container: #eaedff;
+  --surface-high: #e2e7ff;
+  --surface-highest: #dae2fd;
+
+  /* Content */
+  --on-surface: #131b2e;
+  --on-surface-variant: #44474f;
+  --on-surface-muted: #6a6e7a;
+
+  /* Lines */
+  --outline: #747780;
+  --outline-variant: #c4c6d0;
+
+  /* Brand */
+  --brand: #00204f;
+  /* Exact navy of the logo artwork; reversed to white on the dark canvas. */
+  --logo: #1a3668;
+  --primary: #1a3668;
+  --primary-hover: #2c4678;
+  --on-primary: #ffffff;
+  --accent: #0050cc;
+  --accent-soft: #dae1ff;
+
+  /* Feedback */
+  --success: #2a6038;
+  --error: #ba1a1a;
+
+  /* Inverted band (footer / CTA) */
+  --inverse-surface: #131b2e;
+  --on-inverse-surface: #eef0ff;
+  --on-inverse-surface-variant: #b6bed6;
+
+  /* Glass + depth (Tier 2 / Tier 3 from the design system) */
+  --glass-bg: rgb(255 255 255 / 0.7);
+  --glass-border: rgb(0 0 0 / 0.06);
+  --shadow-ambient: 0 8px 32px rgb(26 54 104 / 0.06);
+  --shadow-raised: 0 12px 40px rgb(26 54 104 / 0.1);
+  --shadow-float: 0 8px 24px rgb(26 54 104 / 0.2);
+  --glow: transparent;
+}
+
+.dark {
+  color-scheme: dark;
+
+  --surface: #0a1128;
+  --surface-lowest: #050914;
+  --surface-low: #0d1530;
+  --surface-container: #131c3c;
+  --surface-high: #1a2447;
+  --surface-highest: #223054;
+
+  --on-surface: #eef0ff;
+  --on-surface-variant: #b6bed6;
+  --on-surface-muted: #8b95b5;
+
+  --outline: #46507a;
+  --outline-variant: #2a3459;
+
+  --brand: #ffffff;
+  --logo: #ffffff;
+  --primary: #0066ff;
+  --primary-hover: #2a80ff;
+  --on-primary: #ffffff;
+  --accent: #61a0ff;
+  --accent-soft: #1e3a6e;
+
+  --success: #8ecf9e;
+  --error: #ffb4ab;
+
+  --inverse-surface: #050914;
+  --on-inverse-surface: #eef0ff;
+  --on-inverse-surface-variant: #a2acc9;
+
+  --glass-bg: rgb(26 54 104 / 0.22);
+  --glass-border: rgb(255 255 255 / 0.1);
+  --shadow-ambient: 0 8px 32px rgb(0 0 0 / 0.4);
+  --shadow-raised: 0 12px 40px rgb(0 102 255 / 0.14);
+  --shadow-float: 0 8px 24px rgb(0 102 255 / 0.3);
+  --glow: rgb(0 102 255 / 0.35);
+}
+
+@theme inline {
+  --color-surface: var(--surface);
+  --color-surface-lowest: var(--surface-lowest);
+  --color-surface-low: var(--surface-low);
+  --color-surface-container: var(--surface-container);
+  --color-surface-high: var(--surface-high);
+  --color-surface-highest: var(--surface-highest);
+
+  --color-on-surface: var(--on-surface);
+  --color-on-surface-variant: var(--on-surface-variant);
+  --color-on-surface-muted: var(--on-surface-muted);
+
+  --color-outline: var(--outline);
+  --color-outline-variant: var(--outline-variant);
+
+  --color-brand: var(--brand);
+  --color-logo: var(--logo);
+  --color-primary: var(--primary);
+  --color-primary-hover: var(--primary-hover);
+  --color-on-primary: var(--on-primary);
+  --color-accent: var(--accent);
+  --color-accent-soft: var(--accent-soft);
+
+  --color-success: var(--success);
+  --color-error: var(--error);
+
+  --color-inverse-surface: var(--inverse-surface);
+  --color-on-inverse-surface: var(--on-inverse-surface);
+  --color-on-inverse-surface-variant: var(--on-inverse-surface-variant);
+
+  --font-sans: 'Hanken Grotesk Variable', ui-sans-serif, system-ui, sans-serif;
+
+  /* Type scale from the design system tokens */
+  --text-label-caps: 0.75rem;
+  --text-label-caps--line-height: 1rem;
+  --text-label-caps--letter-spacing: 0.05em;
+  --text-label-caps--font-weight: 700;
+
+  --text-body-md: 1rem;
+  --text-body-md--line-height: 1.5rem;
+
+  --text-body-lg: 1.125rem;
+  --text-body-lg--line-height: 1.75rem;
+
+  --text-headline-md: 1.5rem;
+  --text-headline-md--line-height: 2rem;
+  --text-headline-md--font-weight: 600;
+
+  --text-headline-lg: 2rem;
+  --text-headline-lg--line-height: 2.5rem;
+  --text-headline-lg--font-weight: 700;
+
+  --text-headline-xl: 2.5rem;
+  --text-headline-xl--line-height: 3rem;
+  --text-headline-xl--letter-spacing: -0.01em;
+  --text-headline-xl--font-weight: 700;
+
+  --text-display: 4rem;
+  --text-display--line-height: 4.5rem;
+  --text-display--letter-spacing: -0.02em;
+  --text-display--font-weight: 800;
+
+  /* Layout rhythm */
+  --spacing-gutter: 2rem;
+  --spacing-section: 7.5rem;
+
+  --container-page: 1440px;
+
+  --shadow-ambient: var(--shadow-ambient);
+  --shadow-raised: var(--shadow-raised);
+  --shadow-float: var(--shadow-float);
+}
+
+@layer base {
+  html {
+    scroll-behavior: smooth;
+    /* Offset anchor targets so the fixed header never covers a heading. */
+    scroll-padding-top: 6rem;
+  }
+
+  body {
+    background-color: var(--surface);
+    color: var(--on-surface);
+    font-family: var(--font-sans);
+    -webkit-font-smoothing: antialiased;
+  }
+
+  ::selection {
+    background-color: var(--primary);
+    color: #fff;
+  }
+
+  :focus-visible {
+    outline: 2px solid var(--primary);
+    outline-offset: 3px;
+    border-radius: 2px;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    html {
+      scroll-behavior: auto;
+    }
+
+    *,
+    *::before,
+    *::after {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.01ms !important;
+    }
+  }
+}
+
+@utility glass {
+  background: var(--glass-bg);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid var(--glass-border);
+}
+
+/* Section-scale headline: 32px on mobile, 40px from md up. */
+@utility headline-section {
+  font-size: var(--text-headline-lg);
+  line-height: var(--text-headline-lg--line-height);
+  font-weight: 700;
+  letter-spacing: -0.01em;
+
+  @variant md {
+    font-size: var(--text-headline-xl);
+    line-height: var(--text-headline-xl--line-height);
+  }
+}
+
+/* Ambient blur orbs used behind the hero and bento cards. */
+@utility orb {
+  position: absolute;
+  border-radius: 9999px;
+  filter: blur(80px);
+  pointer-events: none;
+  z-index: 0;
+}

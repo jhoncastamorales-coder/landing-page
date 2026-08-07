@@ -1,0 +1,49 @@
+---
+import Icon from './Icon.astro';
+import { useTranslations, switchLocalePath, languages, type Lang } from '../i18n';
+
+interface Props {
+  lang: Lang;
+  class?: string;
+}
+
+const { lang, class: className } = Astro.props;
+const t = useTranslations(lang);
+
+const options = (Object.keys(languages) as Lang[]).map((code) => ({
+  code,
+  label: languages[code],
+  href: switchLocalePath(Astro.url, code),
+  current: code === lang,
+}));
+---
+
+<div
+  class:list={[
+    'flex items-center gap-1 rounded-lg border border-outline-variant/60 p-0.5',
+    className,
+  ]}
+  role="group"
+  aria-label={t.a11y.switchLanguage}
+>
+  <Icon name="globe" size={16} class="ml-1.5 text-on-surface-muted" />
+  {
+    options.map((option) => (
+      <a
+        href={option.href}
+        hreflang={option.code}
+        lang={option.code}
+        aria-current={option.current ? 'true' : undefined}
+        title={option.label}
+        class:list={[
+          'rounded-md px-2 py-1.5 text-label-caps uppercase transition-colors',
+          option.current
+            ? 'bg-primary text-on-primary'
+            : 'text-on-surface-variant hover:text-primary',
+        ]}
+      >
+        {option.code}
+      </a>
+    ))
+  }
+</div>

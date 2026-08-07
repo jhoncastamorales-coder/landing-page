@@ -1,0 +1,60 @@
+---
+import Section from './Section.astro';
+import { useTranslations, type Lang } from '../i18n';
+
+/**
+ * Answer-engine bait, in the good sense: a self-contained definition of the
+ * product plus a spec table. Both are plain semantic HTML (<p>, <table> with
+ * row headers), which is what LLM crawlers extract most reliably — and what a
+ * human skimming for "is this for me?" wants anyway.
+ */
+interface Props {
+  lang: Lang;
+}
+
+const { lang } = Astro.props;
+const t = useTranslations(lang);
+---
+
+<Section id="what-is-atrio-pms">
+  <div class="grid gap-12 lg:grid-cols-12 lg:gap-gutter">
+    <div class="lg:col-span-6">
+      <p class="text-label-caps text-primary uppercase">{t.seo.definitionEyebrow}</p>
+      <h2 class="headline-section mt-3 text-brand text-balance">{t.seo.definitionTitle}</h2>
+      <p class="mt-5 text-body-lg text-on-surface-variant text-pretty">{t.seo.definition}</p>
+      <p class="mt-4 text-body-md text-on-surface-variant text-pretty">
+        {t.seo.definitionSecondary}
+      </p>
+    </div>
+
+    <div class="lg:col-span-6">
+      <div class="glass overflow-hidden rounded-2xl">
+        <h3 class="border-b border-outline-variant/40 px-6 py-4 text-label-caps text-on-surface-muted uppercase">
+          {t.seo.specTitle}
+        </h3>
+        <div class="overflow-x-auto">
+          <table class="w-full border-collapse text-left">
+            <caption class="sr-only">{t.seo.specTitle} — {t.seo.definitionTitle}</caption>
+            <tbody>
+              {
+                t.seo.specs.map((spec) => (
+                  <tr class="border-b border-outline-variant/30 last:border-0">
+                    <th
+                      scope="row"
+                      class="w-2/5 px-6 py-3.5 align-top text-body-md font-semibold text-on-surface"
+                    >
+                      {spec.term}
+                    </th>
+                    <td class="px-6 py-3.5 align-top text-body-md text-on-surface-variant">
+                      {spec.value}
+                    </td>
+                  </tr>
+                ))
+              }
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+</Section>

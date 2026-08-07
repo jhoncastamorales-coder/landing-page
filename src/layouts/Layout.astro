@@ -1,0 +1,105 @@
+---
+import '../styles/global.css';
+// The latin subset carries every glyph the ES/EN copy needs; preloading it
+// removes the font swap from the LCP path.
+import latinFontUrl from '@fontsource-variable/hanken-grotesk/files/hanken-grotesk-latin-wght-normal.woff2?url';
+import { useTranslations, switchLocalePath, type Lang } from '../i18n';
+import { BRAND, SITE_URL } from '../consts';
+import Header from '../components/Header.astro';
+import Footer from '../components/Footer.astro';
+import LogoSprite from '../components/LogoSprite.astro';
+import StructuredData from '../components/StructuredData.astro';
+
+interface Props {
+  lang: Lang;
+}
+
+const { lang } = Astro.props;
+const t = useTranslations(lang);
+
+const canonical = new URL(Astro.url.pathname, SITE_URL);
+const ogImage = new URL(BRAND.ogImage, SITE_URL).href;
+
+const alternates = [
+  { hreflang: 'es-ES', href: new URL(switchLocalePath(Astro.url, 'es'), SITE_URL).href },
+  { hreflang: 'en-US', href: new URL(switchLocalePath(Astro.url, 'en'), SITE_URL).href },
+  { hreflang: 'x-default', href: new URL(switchLocalePath(Astro.url, 'es'), SITE_URL).href },
+];
+---
+
+<!doctype html>
+<html lang={lang === 'es' ? 'es-ES' : 'en-US'}>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>{t.meta.title}</title>
+    <meta name="description" content={t.meta.description} />
+    <link rel="canonical" href={canonical.href} />
+
+    {/* Let search and answer engines quote the page generously. */}
+    <meta
+      name="robots"
+      content="index, follow, max-snippet:-1, max-image-preview:large, max-video-preview:-1"
+    />
+
+    {alternates.map((alt) => <link rel="alternate" hreflang={alt.hreflang} href={alt.href} />)}
+
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content={BRAND.name} />
+    <meta property="og:title" content={t.meta.title} />
+    <meta property="og:description" content={t.meta.description} />
+    <meta property="og:url" content={canonical.href} />
+    <meta property="og:locale" content={lang === 'es' ? 'es_ES' : 'en_US'} />
+    <meta property="og:locale:alternate" content={lang === 'es' ? 'en_US' : 'es_ES'} />
+    <meta property="og:image" content={ogImage} />
+    <meta property="og:image:type" content="image/png" />
+    <meta property="og:image:width" content={String(BRAND.ogImageWidth)} />
+    <meta property="og:image:height" content={String(BRAND.ogImageHeight)} />
+    <meta property="og:image:alt" content={t.meta.ogImageAlt} />
+
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content={t.meta.title} />
+    <meta name="twitter:description" content={t.meta.description} />
+    <meta name="twitter:image" content={ogImage} />
+    <meta name="twitter:image:alt" content={t.meta.ogImageAlt} />
+
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+    <link rel="manifest" href="/site.webmanifest" />
+    <link rel="sitemap" type="application/xml" href="/sitemap-index.xml" />
+
+    <link rel="preload" href={latinFontUrl} as="font" type="font/woff2" crossorigin="anonymous" />
+
+    <meta name="generator" content={Astro.generator} />
+    <meta name="theme-color" content="#faf8ff" media="(prefers-color-scheme: light)" />
+    <meta name="theme-color" content="#0a1128" media="(prefers-color-scheme: dark)" />
+
+    <StructuredData lang={lang} />
+
+    {/* Applied before first paint so the page never flashes the wrong theme. */}
+    <script is:inline>
+      (() => {
+        const stored = localStorage.getItem('theme');
+        const dark = stored
+          ? stored === 'dark'
+          : window.matchMedia('(prefers-color-scheme: dark)').matches;
+        document.documentElement.classList.toggle('dark', dark);
+      })();
+    </script>
+  </head>
+  <body>
+    <LogoSprite />
+    <a
+      href="#main"
+      class="sr-only rounded-lg focus:not-sr-only focus:fixed focus:top-4 focus:left-4 focus:z-100 focus:bg-primary focus:px-4 focus:py-2 focus:text-on-primary"
+    >
+      {t.a11y.skipToContent}
+    </a>
+    <Header lang={lang} />
+    <main id="main">
+      <slot />
+    </main>
+    <Footer lang={lang} />
+  </body>
+</html>

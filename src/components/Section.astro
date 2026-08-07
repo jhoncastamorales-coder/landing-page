@@ -1,0 +1,25 @@
+---
+import type { HTMLAttributes } from 'astro/types';
+
+/** Shared section shell: vertical rhythm + the responsive page gutters. */
+interface Props extends HTMLAttributes<'section'> {
+  tone?: 'base' | 'raised' | 'inverse';
+}
+
+const { tone = 'base', class: className, ...rest } = Astro.props;
+
+const toneClass = {
+  base: 'bg-surface',
+  raised: 'bg-surface-low',
+  inverse: 'bg-inverse-surface text-on-inverse-surface',
+} as const;
+---
+
+<section
+  class:list={['relative overflow-hidden py-20 md:py-section', toneClass[tone], className]}
+  {...rest}
+>
+  <div class="relative z-10 mx-auto max-w-page px-5 md:px-10 xl:px-20">
+    <slot />
+  </div>
+</section>

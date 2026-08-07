@@ -1,0 +1,95 @@
+---
+import Section from './Section.astro';
+import Icon from './Icon.astro';
+import { useTranslations, type Lang } from '../i18n';
+import { PLANS, formatPrice } from '../data/plans';
+
+interface Props {
+  lang: Lang;
+}
+
+const { lang } = Astro.props;
+const t = useTranslations(lang);
+
+const highlightedIndex = 1;
+
+// Prices come from src/data/plans.ts so the page, the JSON-LD offers and
+// llms.txt all quote the same number, formatted for the active locale.
+const plans = t.pricing.plans.map((plan, index) => {
+  const { priceEUR } = PLANS[index]!;
+  return {
+    ...plan,
+    priceEUR,
+    priceLabel: priceEUR === null ? t.pricing.priceCustom : formatPrice(priceEUR, lang),
+  };
+});
+---
+
+<Section id="pricing" tone="raised">
+  <div class="mx-auto mb-14 max-w-2xl text-center">
+    <p class="text-label-caps text-primary uppercase">{t.pricing.eyebrow}</p>
+    <h2 class="headline-section mt-3 text-brand text-balance">{t.pricing.title}</h2>
+    <p class="mt-4 text-body-lg text-on-surface-variant text-pretty">{t.pricing.subtitle}</p>
+  </div>
+
+  <div class="grid items-start gap-6 lg:grid-cols-3">
+    {
+      plans.map((plan, index) => {
+        const highlighted = index === highlightedIndex;
+        const isCustom = plan.priceEUR === null;
+        return (
+          <article
+            class:list={[
+              'relative flex h-full flex-col rounded-2xl p-8',
+              highlighted
+                ? 'border-2 border-primary bg-surface-lowest shadow-[var(--shadow-raised)] lg:-mt-4 lg:pb-12'
+                : 'glass',
+            ]}
+          >
+            {highlighted && (
+              <span class="absolute -top-3 left-8 rounded-full bg-primary px-3 py-1 text-label-caps text-on-primary uppercase">
+                {t.pricing.popular}
+              </span>
+            )}
+
+            <h3 class="text-headline-md text-brand">{plan.name}</h3>
+            <p class="mt-2 text-body-md text-on-surface-variant">{plan.description}</p>
+
+            <p class="mt-6 flex items-baseline gap-1.5">
+              <span class="text-[2.5rem] leading-none font-extrabold tracking-tight text-brand">
+                {plan.priceLabel}
+              </span>
+              {!isCustom && (
+                <span class="text-body-md text-on-surface-muted">{t.pricing.perMonth}</span>
+              )}
+            </p>
+            {!isCustom && (
+              <p class="mt-1 text-label-caps text-on-surface-muted">{t.pricing.perRoomNote}</p>
+            )}
+
+            <ul class="mt-8 grow space-y-3">
+              {plan.features.map((feature) => (
+                <li class="flex items-start gap-2.5">
+                  <Icon name="check" size={19} class="mt-0.5 shrink-0 text-primary" />
+                  <span class="text-body-md text-on-surface-variant">{feature}</span>
+                </li>
+              ))}
+            </ul>
+
+            <a
+              href="#cta"
+              class:list={[
+                'mt-8 inline-flex items-center justify-center rounded-xl px-6 py-3.5 text-label-caps uppercase transition-colors',
+                highlighted
+                  ? 'bg-primary text-on-primary hover:bg-primary-hover'
+                  : 'border border-primary text-primary hover:bg-primary hover:text-on-primary',
+              ]}
+            >
+              {isCustom ? t.pricing.ctaContact : t.pricing.cta}
+            </a>
+          </article>
+        );
+      })
+    }
+  </div>
+</Section>

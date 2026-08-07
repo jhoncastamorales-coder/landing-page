@@ -1,0 +1,39 @@
+---
+import Section from './Section.astro';
+import Icon from './Icon.astro';
+import type { IconName } from '../lib/icons';
+import { useTranslations, type Lang } from '../i18n';
+
+interface Props {
+  lang: Lang;
+}
+
+const { lang } = Astro.props;
+const t = useTranslations(lang);
+
+const icons: IconName[] = ['plug', 'card', 'key', 'invoice'];
+---
+
+<Section id="integrations" tone="raised">
+  <div class="grid gap-12 lg:grid-cols-12 lg:gap-gutter">
+    <div class="lg:col-span-5">
+      <p class="text-label-caps text-primary uppercase">{t.integrations.eyebrow}</p>
+      <h2 class="headline-section mt-3 text-brand text-balance">{t.integrations.title}</h2>
+      <p class="mt-5 text-body-lg text-on-surface-variant text-pretty">{t.integrations.body}</p>
+    </div>
+
+    <div class="grid gap-5 sm:grid-cols-2 lg:col-span-7">
+      {
+        t.integrations.items.map((item, index) => (
+          <article class="glass rounded-2xl p-6 transition-shadow hover:shadow-[var(--shadow-raised)]">
+            <span class="flex size-11 items-center justify-center rounded-xl bg-primary/10 text-primary dark:bg-primary/20">
+              <Icon name={icons[index] ?? 'plug'} size={20} />
+            </span>
+            <h3 class="mt-4 text-body-lg font-bold text-brand">{item.title}</h3>
+            <p class="mt-1.5 text-body-md text-on-surface-variant">{item.body}</p>
+          </article>
+        ))
+      }
+    </div>
+  </div>
+</Section>

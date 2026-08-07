@@ -1,0 +1,138 @@
+---
+import Logo from './Logo.astro';
+import Icon from './Icon.astro';
+import ThemeToggle from './ThemeToggle.astro';
+import LanguageSwitcher from './LanguageSwitcher.astro';
+import { useTranslations, type Lang } from '../i18n';
+
+interface Props {
+  lang: Lang;
+}
+
+const { lang } = Astro.props;
+const t = useTranslations(lang);
+
+const links = [
+  { href: '#platform', label: t.nav.platform },
+  { href: '#solutions', label: t.nav.solutions },
+  { href: '#pricing', label: t.nav.pricing },
+  { href: '#faq', label: t.nav.faq },
+];
+---
+
+<header
+  class="fixed inset-x-0 top-0 z-50 border-b border-outline-variant/30 bg-surface/80 backdrop-blur-md"
+>
+  <div class="mx-auto flex h-20 max-w-page items-center justify-between gap-4 px-5 md:px-10 xl:px-20">
+    <a href={lang === 'es' ? '/' : '/en/'} class="shrink-0 text-logo">
+      <Logo class="h-8 w-auto sm:h-9" />
+    </a>
+
+    <nav class="hidden items-center gap-8 lg:flex" aria-label={t.a11y.mainNavigation}>
+      {
+        links.map((link) => (
+          <a
+            href={link.href}
+            class="text-body-md text-on-surface-variant transition-colors hover:text-primary"
+          >
+            {link.label}
+          </a>
+        ))
+      }
+    </nav>
+
+    <div class="flex items-center gap-2 md:gap-3">
+      <LanguageSwitcher lang={lang} class="hidden sm:flex" />
+      <ThemeToggle lang={lang} />
+      <a
+        href="#cta"
+        class="hidden rounded-lg bg-primary px-5 py-2.5 text-label-caps text-on-primary uppercase transition-colors hover:bg-primary-hover md:inline-flex"
+      >
+        {t.nav.getStarted}
+      </a>
+      <button
+        type="button"
+        data-menu-toggle
+        aria-expanded="false"
+        aria-controls="mobile-menu"
+        aria-label={t.a11y.openMenu}
+        data-label-close={t.a11y.closeMenu}
+        class="inline-flex size-10 items-center justify-center rounded-lg border border-outline-variant/60 text-on-surface-variant lg:hidden"
+      >
+        <Icon name="menu" size={20} data-menu-icon="open" />
+        <Icon name="close" size={20} class="hidden" data-menu-icon="close" />
+      </button>
+    </div>
+  </div>
+
+  <div
+    id="mobile-menu"
+    hidden
+    class="border-t border-outline-variant/30 bg-surface/95 backdrop-blur-md lg:hidden"
+  >
+    <nav class="mx-auto flex max-w-page flex-col gap-1 px-5 py-4" aria-label={t.a11y.mainNavigation}>
+      {
+        links.map((link) => (
+          <a
+            href={link.href}
+            data-menu-link
+            class="rounded-lg px-3 py-3 text-body-lg text-on-surface-variant transition-colors hover:bg-surface-container hover:text-primary"
+          >
+            {link.label}
+          </a>
+        ))
+      }
+      <div class="mt-3 flex items-center justify-between gap-3">
+        <LanguageSwitcher lang={lang} class="sm:hidden" />
+        <a
+          href="#cta"
+          data-menu-link
+          class="flex-1 rounded-lg bg-primary px-5 py-3 text-center text-label-caps text-on-primary uppercase"
+        >
+          {t.nav.getStarted}
+        </a>
+      </div>
+    </nav>
+  </div>
+</header>
+
+{/* Spacer for the fixed header. */}
+<div class="h-20" aria-hidden="true"></div>
+
+<script>
+  const toggle = document.querySelector<HTMLButtonElement>('[data-menu-toggle]');
+  const menu = document.querySelector<HTMLElement>('#mobile-menu');
+  const openIcon = document.querySelector<SVGElement>('[data-menu-icon="open"]');
+  const closeIcon = document.querySelector<SVGElement>('[data-menu-icon="close"]');
+
+  if (toggle && menu && openIcon && closeIcon) {
+    const openLabel = toggle.getAttribute('aria-label') ?? '';
+    const closeLabel = toggle.dataset.labelClose ?? openLabel;
+
+    const setOpen = (open: boolean) => {
+      menu.hidden = !open;
+      toggle.setAttribute('aria-expanded', String(open));
+      toggle.setAttribute('aria-label', open ? closeLabel : openLabel);
+      openIcon.classList.toggle('hidden', open);
+      closeIcon.classList.toggle('hidden', !open);
+    };
+
+    toggle.addEventListener('click', () => setOpen(Boolean(menu.hidden)));
+
+    for (const link of menu.querySelectorAll('[data-menu-link]')) {
+      link.addEventListener('click', () => setOpen(false));
+    }
+
+    // The menu is desktop-nav's stand-in only; drop it if the viewport grows.
+    window.matchMedia('(min-width: 1024px)').addEventListener('change', (event) => {
+      if (event.matches) setOpen(false);
+    });
+
+    document.addEventListener('keydown', (event) => {
+      if (event.key === 'Escape' && !menu.hidden) {
+        setOpen(false);
+        toggle.focus();
+      }
+    });
+  }
+</script>

@@ -1,0 +1,118 @@
+---
+import Section from './Section.astro';
+import Icon from './Icon.astro';
+import { useTranslations, type Lang } from '../i18n';
+
+interface Props {
+  lang: Lang;
+}
+
+const { lang } = Astro.props;
+const t = useTranslations(lang);
+
+const tasks = [
+  { label: t.features.operations.taskReady, tone: 'bg-success' },
+  { label: t.features.operations.taskCleaning, tone: 'bg-accent' },
+  { label: t.features.operations.taskCheckin, tone: 'bg-primary' },
+];
+
+// Bars for the "clear reporting" card, as percentages of the card height.
+const bars = [38, 62, 48, 84, 70, 96];
+---
+
+<Section id="platform" tone="raised">
+  <div class="mx-auto mb-14 max-w-2xl text-center">
+    <p class="text-label-caps text-primary uppercase">{t.features.eyebrow}</p>
+    <h2 class="headline-section mt-3 text-brand text-balance">{t.features.title}</h2>
+    <p class="mt-4 text-body-lg text-on-surface-variant text-pretty">{t.features.subtitle}</p>
+  </div>
+
+  <div class="grid gap-6 md:grid-cols-3">
+    <!-- Inventory: wide card -->
+    <article
+      class="glass group relative flex flex-col overflow-hidden rounded-2xl p-8 transition-shadow hover:shadow-[var(--shadow-raised)] md:col-span-2"
+    >
+      <div
+        class="orb -top-24 -right-24 size-64 bg-primary/10 transition-transform duration-700 group-hover:scale-110"
+        aria-hidden="true"
+      >
+      </div>
+      <div class="relative z-10 grow">
+        <Icon name="inventory" size={32} class="text-primary" />
+        <h3 class="mt-5 text-headline-md text-brand">{t.features.inventory.title}</h3>
+        <p class="mt-2 max-w-md text-body-md text-on-surface-variant">{t.features.inventory.body}</p>
+      </div>
+
+      <!-- Availability grid -->
+      <div
+        class="relative z-10 mt-8 grid grid-cols-7 gap-1.5 rounded-xl border border-outline-variant/40 bg-surface p-3 sm:grid-cols-14"
+      >
+        {
+          Array.from({ length: 42 }, (_, index) => {
+            const tone =
+              index % 7 === 3 || index % 5 === 0
+                ? 'bg-primary'
+                : index % 3 === 0
+                  ? 'bg-accent-soft'
+                  : 'bg-surface-container';
+            return <span class:list={['h-5 rounded-sm', tone]} />;
+          })
+        }
+      </div>
+    </article>
+
+    <!-- Operations: tall card -->
+    <article
+      class="glass flex flex-col rounded-2xl p-8 transition-shadow hover:shadow-[var(--shadow-raised)]"
+    >
+      <Icon name="operations" size={32} class="text-primary" />
+      <h3 class="mt-5 text-headline-md text-brand">{t.features.operations.title}</h3>
+      <p class="mt-2 grow text-body-md text-on-surface-variant">{t.features.operations.body}</p>
+      <ul class="mt-8 space-y-2.5">
+        {
+          tasks.map((task) => (
+            <li class="flex items-center gap-3 rounded-lg border border-outline-variant/40 bg-surface px-4 py-3">
+              <span class:list={['size-2.5 shrink-0 rounded-full', task.tone]} />
+              <span class="text-body-md text-on-surface-variant">{task.label}</span>
+            </li>
+          ))
+        }
+      </ul>
+    </article>
+
+    <!-- Connectivity -->
+    <article
+      class="glass flex flex-col rounded-2xl p-8 transition-shadow hover:shadow-[var(--shadow-raised)]"
+    >
+      <Icon name="network" size={32} class="text-primary" />
+      <h3 class="mt-5 text-headline-md text-brand">{t.features.connectivity.title}</h3>
+      <p class="mt-2 text-body-md text-on-surface-variant">{t.features.connectivity.body}</p>
+    </article>
+
+    <!-- Reports: wide card -->
+    <article
+      class="glass grid items-center gap-8 rounded-2xl p-8 transition-shadow hover:shadow-[var(--shadow-raised)] md:col-span-2 md:grid-cols-2"
+    >
+      <div>
+        <Icon name="reports" size={32} class="text-primary" />
+        <h3 class="mt-5 text-headline-md text-brand">{t.features.reports.title}</h3>
+        <p class="mt-2 text-body-md text-on-surface-variant">{t.features.reports.body}</p>
+      </div>
+      <div
+        class="flex h-40 items-end gap-2 rounded-xl border border-outline-variant/40 bg-surface p-4 sm:gap-3"
+      >
+        {
+          bars.map((height, index) => (
+            <span
+              class:list={[
+                'flex-1 rounded-t-md',
+                index === bars.length - 1 ? 'bg-primary' : 'bg-accent-soft',
+              ]}
+              style={`height:${height}%`}
+            />
+          ))
+        }
+      </div>
+    </article>
+  </div>
+</Section>

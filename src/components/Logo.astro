@@ -1,0 +1,28 @@
+---
+import { logoPaths } from '../generated/logo-paths';
+
+/**
+ * The ATRIO PMS lockup. Size it with a height class (`h-8 w-auto`); the colour
+ * comes from `currentColor`, so `text-logo` keeps it brand navy in light mode
+ * and white in dark mode.
+ */
+interface Props {
+  class?: string;
+  /** Accessible name. Pass `null` when an ancestor already labels the logo. */
+  label?: string | null;
+}
+
+const { class: className, label = 'ATRIO PMS' } = Astro.props;
+const { full } = logoPaths;
+---
+
+<svg
+  class={className}
+  viewBox={`0 0 ${full.width} ${full.height}`}
+  role={label ? 'img' : undefined}
+  aria-label={label ?? undefined}
+  aria-hidden={label ? undefined : 'true'}
+  focusable="false"
+>
+  <use href="#atrio-logo"></use>
+</svg>
